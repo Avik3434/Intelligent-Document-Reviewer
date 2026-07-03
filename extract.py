@@ -2,7 +2,7 @@ import fitz
 import pytesseract
 import os
 from pdf2image import convert_from_path
-
+from list_pdfs import list_pdf
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract\tesseract.exe"
 os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract\tessdata"
 POPPLER_PATH = r"C:\poppler-26.02.0\Library\bin"
@@ -13,7 +13,7 @@ def extract_text(pdf_path):
 
     for page_num, page in enumerate(doc):
         text = page.get_text().strip()
-        
+         
         # Check if extracted text is empty or looks corrupted
         if not text or looks_corrupted(text):
             print(f"Page {page_num + 1}: Using OCR")
@@ -51,7 +51,10 @@ def ocr_page(pdf_path, page_num):
     ocr_text = pytesseract.image_to_string(images[0])
     return ocr_text
 
+def main_text(pdf_path):
+    return extract_text(pdf_path)
+    
 
-if __name__ == "__main__":
-    text = extract_text("sample.pdf")
-    print(text)
+# if __name__ == "__main__":
+#     text = extract_text("sample.pdf")
+#     print(text)

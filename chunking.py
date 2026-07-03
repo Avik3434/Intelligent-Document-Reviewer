@@ -1,6 +1,7 @@
 import nltk
 from nltk.tokenize import sent_tokenize
 import tiktoken
+# from extract import main_text
 
 # Download sentence tokenizer
 try:
@@ -10,7 +11,6 @@ except LookupError:
 
 # Use OpenAI's tokenizer (works for most models)
 tokenizer = tiktoken.get_encoding("cl100k_base")
-
 
 def count_tokens(text):
     """Count tokens in text."""
@@ -67,15 +67,15 @@ def chunk_text(text, max_chunk_tokens=512, overlap_sentences=2):
     return chunks
 
 
-if __name__ == "__main__":
-    sample_text = """
-    This is the first sentence. This is the second sentence. This is the third sentence.
-    This is a new paragraph. It contains multiple sentences. Each one is meaningful.
-    Here is more content to test chunking with. The chunker should respect sentence boundaries.
-    This ensures that chunks make semantic sense. They aren't cut off mid-thought.
-    """
-    
-    chunks = chunk_text(sample_text, max_chunk_tokens=50, overlap_sentences=2)
+def Running(text):
+    chunks = chunk_text(text, max_chunk_tokens=50, overlap_sentences=2)
+
     for chunk in chunks:
-        print(f"Chunk {chunk['chunk_id']}: {chunk['tokens']} tokens, {chunk['sentence_count']} sentences")
-        print(f"  {chunk['text'][:80]}...\n")
+        print(
+            f"Chunk {chunk['chunk_id']}: "
+            f"{chunk['tokens']} tokens, "
+            f"{chunk['sentence_count']} sentences"
+        )
+        print(f"{chunk['text'][:80]}...\n")
+
+    return chunks
