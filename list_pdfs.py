@@ -2,8 +2,8 @@ import os
 
 def list_pdf():
     pdfs = []
-    folder_path = "PDFS"
-
+    folder_path = "PDFS" #Paste your own path
+    print("--select file--\n")
     for file in os.listdir(folder_path):
         full_path = os.path.join(folder_path, file)
 
@@ -15,16 +15,18 @@ def list_pdf():
 
     while True:
         try:
-            choice = int(input("Enter the number of the PDF you want to choose: "))
+            
+            choice = int(input("\nEnter the number of the PDF you want to choose: "))
 
             if 1 <= choice <= len(pdfs):
-                print(f"Selected: {pdfs[choice - 1]}")
-                return pdfs[choice - 1]
-                break
-            else:
-                print("Invalid number. Try again.")
+                selected = os.path.join(folder_path, pdfs[choice - 1])
+                print(f"Selected: {pdfs[choice - 1]}\n")
+                return selected
+
+            print("Invalid number. Try again.")
 
         except ValueError:
             print("Please enter a valid number.")
 
-selected_pdf = list_pdf()
+if __name__ == "__main__":
+    print(list_pdf())

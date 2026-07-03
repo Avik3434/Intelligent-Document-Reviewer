@@ -1,7 +1,6 @@
 import nltk
 from nltk.tokenize import sent_tokenize
 import tiktoken
-# from extract import main_text
 
 # Download sentence tokenizer
 try:
@@ -67,15 +66,16 @@ def chunk_text(text, max_chunk_tokens=512, overlap_sentences=2):
     return chunks
 
 
-def Running(text):
+def final_running(text):
     chunks = chunk_text(text, max_chunk_tokens=50, overlap_sentences=2)
-
+    total_tokens = 0
     for chunk in chunks:
         print(
             f"Chunk {chunk['chunk_id']}: "
             f"{chunk['tokens']} tokens, "
             f"{chunk['sentence_count']} sentences"
         )
-        print(f"{chunk['text'][:80]}...\n")
-
+        print(f"{chunk['text']}\n")
+        total_tokens += chunk['tokens']
+    print(f"Total token: {total_tokens}")
     return chunks
