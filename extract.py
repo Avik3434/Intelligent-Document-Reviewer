@@ -7,7 +7,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract\tesseract.e
 os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract\tessdata"
 POPPLER_PATH = r"C:\poppler-26.02.0\Library\bin"
 
-def extract_text(pdf_path):
+def extract_text(pdf_path): 
     doc = fitz.open(pdf_path)
     full_text = ""
 
