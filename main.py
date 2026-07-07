@@ -4,27 +4,27 @@ from list_pdfs import list_pdf
 from embedding import embed_chunks
 from vector_database import VectorStore
 from ask_question import get_query_embedding
+# from trial import Chunking
+# from BetterChunking import chunk_by_coherence
 
-# Currently this is only available for PDF. later more things will be implemented.
-
-# Creating vectorstore object
+# Currently this is only available for PDF. later more things will be 
 vector_store = VectorStore()
 
-# ----RAG Pipeline---
-# getting file -> extract text -> make chunks -> embedding
 
 file_path = list_pdf()
 text = main_text(file_path)
 chunks = final_running(text)
+# chunks = Chunking(text)
+# chunks = chunk_by_coherence(text)
 embedded_chunks = embed_chunks(chunks)
-
-# store embedding chunks in vector database
 
 storage = vector_store.store_chunks(embedded_chunks)
 if not storage:
     print("Storage failed!")
 
-# asks user question -> embedding -> retrival
+print(vector_store.collection.count())
+
+
 while True:
     question, query_vector = get_query_embedding()
 

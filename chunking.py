@@ -47,7 +47,9 @@ def chunk_text(text, max_chunk_tokens=512, overlap_sentences=2):
                 break
         
         # If we only added one sentence and token count is huge, include it anyway
-        if len(current_chunk) < 50 and i < len(sentences):
+
+        min_tokens = 50
+        if count_tokens(current_chunk) < min_tokens and i < len(sentences):
             current_chunk += " " + sentences[i]
             i += 1
         
@@ -67,7 +69,7 @@ def chunk_text(text, max_chunk_tokens=512, overlap_sentences=2):
 
 
 def final_running(text):
-    chunks = chunk_text(text, max_chunk_tokens=50, overlap_sentences=2)
+    chunks = chunk_text(text, max_chunk_tokens=150, overlap_sentences=2)
     total_tokens = 0
     for chunk in chunks:
         print(
