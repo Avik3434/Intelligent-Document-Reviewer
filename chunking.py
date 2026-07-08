@@ -69,7 +69,7 @@ def chunk_text(text, max_chunk_tokens=512, overlap_sentences=2):
 
 
 def final_running(text):
-    chunks = chunk_text(text, max_chunk_tokens=150, overlap_sentences=2)
+    chunks = chunk_text(text, max_chunk_tokens=250, overlap_sentences=1)
     total_tokens = 0
     for chunk in chunks:
         print(

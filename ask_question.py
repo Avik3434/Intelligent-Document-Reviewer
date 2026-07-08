@@ -15,7 +15,6 @@ def ask_question():
 
             print("question accepted")
             return user_question
-        
         except Exception as e:
             print(f"Error: {e}")    
 
