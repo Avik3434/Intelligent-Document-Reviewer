@@ -2,7 +2,7 @@ import os
 
 def list_pdf():
     pdfs = []
-    folder_path = "PDFS" #Paste your own path
+    folder_path = "Your_path_here" #Paste your own path
     print("--select file--\n")
     for file in os.listdir(folder_path):
         full_path = os.path.join(folder_path, file)
