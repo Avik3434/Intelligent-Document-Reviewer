@@ -1,16 +1,13 @@
-# Core dependencies
-fitz
-pytesseract
-Pillow
 chromadb
+groq
 langchain-huggingface
 langchain-text-splitters
+nltk
+pdf2image
+Pillow
+PyMuPDF
+pytesseract
+python-dotenv
+sentence-transformers
+tiktoken
 torch
-
-# Optional / future
-# langchain
-# langchain-community
-# sentence-transformers
-# cohere
-# flask / fastapi
-# uvicorn
