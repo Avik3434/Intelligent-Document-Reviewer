@@ -1,95 +1,126 @@
-# RAG PDF Question Answering System
+# Intelligent Document Reviewer
 
-A simple Retrieval-Augmented Generation (RAG) application that allows you to ask questions about PDF documents.
+An end-to-end **Retrieval-Augmented Generation (RAG)** application that enables users to ask questions about PDF and text documents using semantic search and Large Language Models (LLMs).
 
-The project extracts text from PDF files, intelligently splits the content into chunks, generates semantic embeddings, stores them in a vector database, retrieves the most relevant information for a query, and finally uses an LLM to generate an answer based only on the retrieved context.
+The application extracts text from documents, performs OCR on scanned PDFs when necessary, splits the content into token-aware chunks, generates dense vector embeddings, stores them in a ChromaDB vector database, retrieves the most relevant information using semantic similarity search, reranks the retrieved results with a Cross-Encoder, and finally generates grounded answers using a Large Language Model.
 
-This project was built as a learning project to understand how a complete RAG pipeline works from scratch without relying heavily on high-level frameworks.
-
----
-
-## Features
-
-* PDF text extraction
-* OCR fallback for scanned PDFs
-* Token-aware chunking
-* Sentence Transformer embeddings
-* ChromaDB vector database
-* Semantic similarity search
-* LLM-powered question answering
-* Modular code structure
+This project was built to gain a deep understanding of the complete RAG pipeline by implementing each component from scratch rather than relying heavily on high-level frameworks.
 
 ---
 
-## Pipeline
+# Features
+
+- 📄 PDF document support
+- 📝 TXT document support
+- 🔍 OCR fallback for scanned PDFs
+- ✂️ Token-aware chunking with overlap
+- 🧠 Dense embeddings using **BAAI/bge-m3**
+- 🗂 Persistent vector storage with **ChromaDB**
+- 🚫 Duplicate document detection
+- 🔎 Semantic similarity search
+- 🎯 Cross-Encoder reranking using **BAAI/bge-reranker-base**
+- 🤖 Context-aware answer generation using **Groq LLM**
+- 📑 Metadata-rich document indexing
+- 🏗 Clean and modular project architecture
+
+---
+
+# Architecture
 
 ```text
-PDF
- │
- ▼
-Text Extraction
- │
- ▼
-Chunking
- │
- ▼
-Embedding
- │
- ▼
-ChromaDB
- │
- ▼
-Semantic Retrieval
- │
- ▼
-LLM
- │
- ▼
-Answer
+             PDF / TXT
+                 │
+                 ▼
+       Document Extraction
+                 │
+                 ▼
+      OCR (if document is scanned)
+                 │
+                 ▼
+      Token-aware Chunking
+                 │
+                 ▼
+        BGE-M3 Embeddings
+                 │
+                 ▼
+     ChromaDB Vector Store
+                 │
+                 ▼
+      Semantic Retrieval
+          (Top K Chunks)
+                 │
+                 ▼
+   Cross-Encoder Reranking
+                 │
+                 ▼
+      Context Construction
+                 │
+                 ▼
+          Groq LLM
+                 │
+                 ▼
+         Generated Answer
 ```
 
 ---
 
-## Project Structure
+# Project Structure
 
-```
+```text
 .
-.
-├── ask_question.py
-├── chunking.py
-├── embedding.py
-├── engine.py
-├── extract.py
-├── list_pdfs.py
+├── Ingestion
+│   ├── extract_pdf.py
+│   ├── extract_txt.py
+│   ├── ingestion.py
+│   └── parser.py
+│
+├── models
+│   ├── Chunking.py
+│   ├── Embedding.py
+│   ├── LLM.py
+│   ├── reranker.py
+│   └── vector_database.py
+│
+├── Retrieval
+│   ├── query_processing.py
+│   ├── Retrieval.py
+│   └── retrieve.py
+│
+├── Pdfs
+├── TextFiles
 ├── main.py
-├── retrival.py
-├── vector_database.py
 ├── requirements.txt
+├── .env
 └── README.md
 ```
 
 ---
 
-## Technologies Used
+# Technologies Used
 
-* Python
-* ChromaDB
-* Sentence Transformers
-* PyMuPDF
-* Tesseract OCR
-* pdf2image
-* NLTK
-* Groq API
+- Python
+- ChromaDB
+- HuggingFace Embeddings
+- BAAI/bge-m3
+- BAAI/bge-reranker-base
+- Groq API
+- PyMuPDF
+- pdf2image
+- Tesseract OCR
+- NLTK
+- tiktoken
+- PyTorch
 
 ---
 
-## Installation
+# Installation
 
 Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/your-repository.git
-cd your-repository
+git clone https://github.com/Avik3434/Intelligent-Document-Reviewer.git
+
+cd Intelligent-Document-Reviewer
 ```
 
 Create a virtual environment
@@ -98,21 +129,21 @@ Create a virtual environment
 python -m venv .venv
 ```
 
-Activate it
+Activate the environment
 
-**Windows**
+### Windows
 
 ```bash
 .venv\Scripts\activate
 ```
 
-**Linux / macOS**
+### Linux / macOS
 
 ```bash
 source .venv/bin/activate
 ```
 
-Install the dependencies
+Install the required dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -120,105 +151,189 @@ pip install -r requirements.txt
 
 ---
 
-## Additional Requirements
+# Environment Variables
 
-This project also requires two external tools.
+Create a `.env` file in the project root.
 
-### Tesseract OCR
-
-Install Tesseract OCR and update the path in `extract.py`.
-
-### Poppler
-
-Install Poppler and update the Poppler path in `extract.py`.
-
-These are only required for OCR support when processing scanned PDF documents.
+```env
+GROQ_API_KEY=your_groq_api_key
+```
 
 ---
 
-## Usage
+# Additional Requirements
 
-Place your PDF files in any directory and update the path in `list_pdfs.py` to point to that location.
+OCR support requires the following external tools.
 
-Run the application.
+## Tesseract OCR
+
+Install Tesseract OCR and update its executable path inside `extract_pdf.py`.
+
+## Poppler
+
+Install Poppler and configure its binary path inside `extract_pdf.py`.
+
+These are only required when processing scanned PDF documents.
+
+---
+
+# Usage
+
+Run the application
 
 ```bash
 python main.py
 ```
 
-Choose a PDF from the list.
+The application allows you to:
 
-After indexing is complete, ask questions about the document.
+- Index a new document
+- Add additional documents
+- Ask questions about indexed documents
+- Exit the application
 
-Example:
+Example
 
-```
-Ask a question:
+```text
+Question:
 
-> What is Retrieval-Augmented Generation?
+What is Retrieval-Augmented Generation?
 
 Answer:
 
-Retrieval-Augmented Generation (RAG) combines information retrieval with a language model to answer questions using relevant context extracted from documents.
+Retrieval-Augmented Generation (RAG) combines information retrieval with a language model by retrieving relevant document chunks before generating a grounded response.
 ```
 
 ---
 
-## Current Workflow
+# Retrieval Pipeline
 
-1. Select a PDF
+The application follows a multi-stage retrieval pipeline.
+
+```text
+User Question
+       │
+       ▼
+Generate Query Embedding
+       │
+       ▼
+Semantic Search
+(ChromaDB Top-K)
+       │
+       ▼
+Cross-Encoder Reranker
+       │
+       ▼
+Top Relevant Chunks
+       │
+       ▼
+Prompt Construction
+       │
+       ▼
+Groq LLM
+       │
+       ▼
+Final Answer
+```
+
+---
+
+# Supported File Types
+
+| Format | Supported |
+|---------|-----------|
+| PDF | ✅ |
+| TXT | ✅ |
+
+---
+
+# Current Workflow
+
+1. Select a document
 2. Extract text
-3. Perform OCR if necessary
-4. Split the document into chunks
-5. Generate embeddings
-6. Store embeddings in ChromaDB
-7. Ask a question
-8. Retrieve the most relevant chunks
-9. Generate the final answer using the LLM
+3. Apply OCR if required
+4. Generate metadata
+5. Split the document into token-aware chunks
+6. Generate dense embeddings
+7. Store embeddings in ChromaDB
+8. Ask a question
+9. Retrieve the most relevant chunks
+10. Rerank retrieved results
+11. Generate a grounded response using the LLM
 
 ---
 
-## Limitations
+# Current Limitations
 
-* Supports PDF documents only.
-* Indexes one document at a time.
-* Requires manual installation of Tesseract and Poppler.
-* Currently uses a command-line interface.
-
----
-
-## Future Improvements
-
-* Support multiple document formats
-* Batch indexing
-* Metadata-based retrieval
-* Hybrid search
-* Cross-encoder reranking
-* Web interface
-* Streaming responses
-* Docker support
-* Better configuration management
+- Supports only PDF and TXT documents
+- Command-line interface only
+- OCR requires Tesseract and Poppler
+- No conversation memory
+- Designed for local execution
 
 ---
 
-## Why I Built This
+# Roadmap
 
-I built this project to gain a deeper understanding of Retrieval-Augmented Generation by implementing the complete pipeline from scratch. Rather than relying heavily on high-level frameworks, I wanted to understand how each stage—document extraction, chunking, embedding generation, vector search, retrieval, and answer generation—works together to produce accurate responses.
+## Version 1.2
 
-## License
+- Hybrid retrieval (Dense + BM25)
+- Metadata filtering
+- Source citations
+- Configurable retrieval settings
+- Improved logging
+- Better evaluation framework
 
-This project is available under the MIT License.
- 
-## About the Author
+## Future Versions
 
-Hi, I'm **Avik Mukherjee**, a Computer Science student from India with a strong interest in Artificial Intelligence, Machine Learning, and Software Development.
+- Web interface (Streamlit/Gradio)
+- Multi-user support
+- Conversation history
+- REST API
+- Docker support
+- Cloud deployment
 
-I enjoy building projects from the ground up to understand how they work internally rather than relying solely on high-level frameworks. This repository is part of my learning journey as I explore Retrieval-Augmented Generation (RAG), vector databases, embeddings, and large language models.
+---
 
-I'm continuously working on improving this project and welcome feedback, suggestions, and contributions.
+# Why I Built This
 
-## Version
+I built this project to understand how Retrieval-Augmented Generation works beyond simply using existing libraries.
 
-**Current Version:** v1.0
+Instead of treating RAG as a black box, I wanted to explore each stage of the pipeline individually—from document extraction and OCR to chunking, embedding generation, vector search, reranking, and LLM integration.
 
-This release implements a complete end-to-end RAG pipeline for PDF-based question answering using semantic retrieval and a large language model.
+The objective was not only to build a working application but also to gain practical experience with the concepts that power modern AI search systems.
+
+---
+
+# About the Author
+
+Hi, I'm **Avik Mukherjee**, a Computer Science student from India with a strong interest in Artificial Intelligence, Machine Learning, Data Science, and Software Development.
+
+I enjoy building projects from scratch to understand how systems work internally rather than relying solely on abstractions. This repository is part of my journey into Retrieval-Augmented Generation (RAG), semantic search, vector databases, and Large Language Models.
+
+If you have suggestions, ideas, or feedback, feel free to open an issue or submit a pull request.
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+---
+
+# Version
+
+## Current Version: **v1.1**
+
+### What's New in v1.1
+
+- Added TXT document support
+- Improved token-aware chunking
+- Migrated to **BAAI/bge-m3** embeddings
+- Added Cross-Encoder reranking
+- Improved retrieval accuracy
+- Added duplicate document detection
+- Enhanced metadata handling
+- Refactored into a modular architecture
+- Improved overall RAG pipeline performance and maintainability
+
+Thank you

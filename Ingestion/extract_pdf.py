@@ -16,16 +16,12 @@ import io
 import fitz
 import pytesseract
 from PIL import Image
-import uuid
+import hashlib
 
-# Pages with fewer native characters than this are treated as scanned.
 OCR_TEXT_THRESHOLD = 20
 
-# Resolution multiplier for OCR page rendering. Higher = more accurate, slower.
 OCR_ZOOM = 2.0
 
-# Embedded images smaller than this (in pixels, either dimension) are skipped.
-# Filters out logos, bullet icons, and decorative dividers.
 MIN_EMBEDDED_IMAGE_DIM = 100
 
 
@@ -62,11 +58,7 @@ def _extract_embedded_images(doc: fitz.Document, page_number: int) -> list[str]:
     return texts
 
 
-def extract_text(
-    pdf_path: str,
-    ocr_threshold: int = OCR_TEXT_THRESHOLD,
-    extract_embedded_images: bool = False
-) -> list[dict]:
+def extract_pdf(pdf_path: str,ocr_threshold: int = OCR_TEXT_THRESHOLD,extract_embedded_images: bool = False) -> dict:
     """Extract text from a PDF file page-by-page.
 
     Args:
@@ -85,9 +77,17 @@ def extract_text(
 
     try:
         doc = fitz.open(str(path))
-        doc_id = str(uuid.uuid4())
         total_pages = len(doc)
-        extracted_pages = []
+
+        # extracted_pages = []
+
+        document = {
+            "metadata" : {
+                "source": path.name,
+                "total_pages": total_pages
+            },
+            "pages": []
+        }
 
         for page_number in range(total_pages):
             page = doc.load_page(page_number)
@@ -106,26 +106,20 @@ def extract_text(
                         content += "\n\n" + "\n\n".join(image_texts)
                         extraction_method = "native+ocr_images"
 
-            extracted_pages.append({
+            document["pages"].append({
                 "content": content,
                 "metadata": {
-                    "source": path.name,
-                    "doc_id": doc_id,
                     "page_number": page_number,
-                    "total_pages": total_pages,
                     "extraction_method": extraction_method
                 }
             })
+
+        full_text = "\n".join(page['content'].strip() for page in document['pages'])
+        doc_id = hashlib.sha256(full_text.encode("utf-8")).hexdigest()
+
+        document['metadata']['doc_id'] = doc_id
+
     finally:
         doc.close()
 
-    return extracted_pages
-
-
-if __name__ == "__main__":
-    pages = extract_text("Pdfs/Fruits.pdf")
-    for p in pages[:3]:
-        print(f"Page {p['metadata']['page_number']} | Method: {p['metadata']['extraction_method']}")
-        print(f"doc id: {p['metadata']['doc_id']} | total pages: {p['metadata']['total_pages']}")
-        print(p['content'][:100])
-        print("---")
+    return document
